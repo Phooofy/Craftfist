@@ -1,0 +1,58 @@
+plugins { id 'fabric-loom' version '1.10.5' }
+version = providers.gradleProperty('mod_version').get()
+group = 'dev.craftfist'
+base { archivesName = 'craftfist' }
+repositories { mavenCentral() }
+dependencies {
+ minecraft 'com.mojang:minecraft:1.21.1'
+ mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
+ modImplementation 'net.fabricmc:fabric-loader:0.16.14'
+ modImplementation 'net.fabricmc.fabric-api:fabric-api:0.116.6+1.21.1'
+ testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+ testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+tasks.withType(JavaCompile).configureEach { options.release = 21 }
+tasks.withType(org.gradle.api.tasks.bundling.AbstractArchiveTask).configureEach {
+ preserveFileTimestamps = false
+ reproducibleFileOrder = true
+}
+
+processResources {
+ inputs.property 'version', project.version
+ filesMatching('fabric.mod.json') { expand version: project.version }
+}
+
+tasks.register('revisionSource', Zip) {
+ archiveFileName = "craftfist-${project.version}-project.zip"
+ destinationDirectory = layout.buildDirectory.dir('revision-snapshots')
+ preserveFileTimestamps = false
+ reproducibleFileOrder = true
+ from(projectDir) {
+  include 'src/**', 'gradle/**', 'gradlew', 'gradlew.bat', 'build.gradle', 'settings.gradle', 'gradle.properties', 'README.md', 'REVISIONS.md', 'AGENTS.md', '.gitignore'
+ }
+}
+
+tasks.register('archiveRevision') {
+ dependsOn 'remapJar', 'revisionSource', 'test'
+ doLast {
+  def destination = file("revisions/${project.version}")
+  destination.mkdirs()
+  def artifacts = [tasks.remapJar.archiveFile.get().asFile, tasks.revisionSource.archiveFile.get().asFile]
+  def digest = { f -> java.security.MessageDigest.getInstance('SHA-256').digest(f.bytes).encodeHex().toString() }
+  // Verify every destination before writing any files: an existing revision is immutable.
+  artifacts.each { source ->
+   def target = new File(destination, source.name)
+   if (target.exists() && digest(target) != digest(source)) {
+    throw new GradleException("Revision ${project.version} already exists with different contents. Increase mod_version in gradle.properties before building this revision.")
+   }
+  }
+  artifacts.each { source ->
+   def target = new File(destination, source.name)
+   if (!target.exists()) java.nio.file.Files.copy(source.toPath(), target.toPath())
+  }
+  new File(destination, 'SHA256SUMS.txt').text = artifacts.collect { source -> "${digest(source)}  ${source.name}" }.join('\n') + '\n'
+ }
+}
+tasks.named('build') { finalizedBy 'archiveRevision' }

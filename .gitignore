@@ -1,0 +1,10 @@
+.gradle/
+build/
+run/
+.tools/
+*.zip
+*.log
+
+logs/
+AGENTS.md
+!revisions/**/*.zip

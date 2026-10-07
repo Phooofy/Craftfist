@@ -1,0 +1,7 @@
+{
+ "schemaVersion": 1, "id": "craftfist", "version": "${version}",
+ "name": "Craftfist", "description": "Become Doomfist with a craftable gauntlet and momentum-driven abilities.",
+ "environment": "*", "entrypoints": {"main": ["dev.craftfist.Craftfist"], "client": ["dev.craftfist.CraftfistClient"]},
+ "mixins": ["craftfist.mixins.json"],
+ "depends": {"fabricloader": ">=0.16.14", "minecraft": "~1.21.1", "java": ">=21", "fabric-api": "*"}
+}

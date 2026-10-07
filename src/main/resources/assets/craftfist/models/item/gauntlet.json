@@ -1,0 +1,36 @@
+{
+  "gui_light": "side",
+  "textures": {
+    "skin": "craftfist:item/doomfist_arm",
+    "particle": "craftfist:item/doomfist_arm"
+  },
+  "display": {
+    "gui": { "rotation": [25, 225, -25], "translation": [0, 0, 0], "scale": [1, 1, 1] },
+    "ground": { "rotation": [0, 0, 90], "translation": [0, 2.5, 0], "scale": [0.6, 0.6, 0.6] },
+    "fixed": { "rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [0.8, 0.8, 0.8] }
+  },
+  "elements": [
+    {
+      "from": [6, 2, 6], "to": [10, 14, 10],
+      "faces": {
+        "up":    { "uv": [11, 4, 12, 5], "texture": "#skin" },
+        "down":  { "uv": [12, 4, 13, 5], "texture": "#skin" },
+        "north": { "uv": [11, 5, 12, 8], "texture": "#skin" },
+        "east":  { "uv": [10, 5, 11, 8], "texture": "#skin" },
+        "south": { "uv": [13, 5, 14, 8], "texture": "#skin" },
+        "west":  { "uv": [12, 5, 13, 8], "texture": "#skin" }
+      }
+    },
+    {
+      "from": [5.75, 1.75, 5.75], "to": [10.25, 14.25, 10.25],
+      "faces": {
+        "up":    { "uv": [11, 8, 12, 9], "texture": "#skin" },
+        "down":  { "uv": [12, 8, 13, 9], "texture": "#skin" },
+        "north": { "uv": [11, 9, 12, 12], "texture": "#skin" },
+        "east":  { "uv": [10, 9, 11, 12], "texture": "#skin" },
+        "south": { "uv": [13, 9, 14, 12], "texture": "#skin" },
+        "west":  { "uv": [12, 9, 13, 12], "texture": "#skin" }
+      }
+    }
+  ]
+}
