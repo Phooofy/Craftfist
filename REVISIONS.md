@@ -17,10 +17,14 @@ Successful builds archive the installable JAR, complete project source ZIP, and 
 | 1.0.7 | Shorter player-facing documentation and repository cleanup for publishing. Gameplay matches 1.0.6. |
 | 1.0.8 | Meteor Strike gives five seconds to rise and aim before diving. Ascent height and the half-second early-dive unlock stay the same. |
 | 1.0.9 | Meteor Strike hovers without movement input and uses WASD relative to camera yaw at the same 1.2-block/tick speed. Diagonal movement is normalized and the dive remains straight down. |
+| 1.0.10 | Rocket Punch hits nearby enemies together within a 1.5-block impact radius. Every target receives damage, knockback, and its own wall-impact check; the dash still stops on the first contact. |
+
+| 1.0.11 | Removed ability icons and replaced the HUD with compact text, aligned keybinds, and subtle progress lines in the bottom-left corner above the hotbar. |
 
 ## Restore a revision
 
 To install an older version, close Minecraft, remove the current Craftfist JAR from `mods/`, and install `revisions/1.0.1/craftfist-1.0.1.jar`. Keep only one Craftfist JAR installed. Back up your world before switching versions that change saved data.
 
 For development rollback, extract the archived project ZIP into a separate folder and use its source. Preserve the main project's `revisions/` directory. A later modified build must receive a new version rather than overwrite the restored archive.
+
 

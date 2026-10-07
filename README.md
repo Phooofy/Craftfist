@@ -30,7 +30,7 @@ You can also use `/give @s craftfist:gauntlet`. Hold it in either hand to equip 
 | Z | Meteor Strike: rise and reposition, then dive down; press again after half a second to dive early |
 | Space during Rocket Punch | Jump cancel |
 
-Change bindings under **Craftfist** in Minecraft's Controls menu. The HUD shows ammo, cooldowns, charge, ultimate progress, and your current bindings.
+Change bindings under **Craftfist** in Minecraft's Controls menu. The bottom-left HUD shows ammo, cooldowns, charge, ultimate progress, and current bindings in a compact text layout above the hotbar.
 
 While equipped, right click charges Rocket Punch and Left Shift is reserved for Slam. With the gauntlet in your offhand, left click still fires Hand Cannon rather than using your main-hand item.
 
@@ -39,7 +39,7 @@ While equipped, right click charges Rocket Punch and Left Shift is reserved for 
 - Hold a charged punch and press Slam to turn the charge into extra launch speed. You can also Slam during a punch dash.
 - Uppercut keeps your horizontal momentum. Punch keeps upward momentum, and jump cancel gives a small boost.
 - Charging slows movement and air steering. Momentum carried from another ability survives until you land; ordinary walking and sprint-jumping still slow down.
-- Punch stops on the first enemy it hits. Knocking that enemy into a wall deals eight extra damage.
+- Punch stops on the first enemy it hits and also damages and knocks back visible enemies within a 1.5-block impact radius in front of you. Each enemy knocked into a wall takes eight extra damage.
 - Power Block reduces frontal damage by 80%. Blocking eight damage empowers your next punch. Empowerment lasts ten seconds and is spent when you launch the punch or convert it into Slam.
 - Hand Cannon waits one second after your last shot before restoring a round. Remaining rounds return every 13 ticks. Firing restarts the wait.
 - Ability hits grant temporary shields, up to eight hearts, and build ultimate charge. Ultimate also charges over time.
@@ -63,5 +63,6 @@ Use `gradlew.bat runClient` for a development client. Builds also save a numbere
 The mod uses a Thunder Doomfist skin and Minecraft sound effects. Custom sounds can be supplied through a resource pack using the events in `assets/craftfist/sounds.json` and mono OGG files.
 
 This is an unofficial fan mod. Doomfist and Overwatch belong to Blizzard; the character texture belongs to its creator.
+
 
 

@@ -228,11 +228,19 @@ public class Craftfist implements ModInitializer {
     Vec3d stop=s.lastDashPos.add(PunchCollision.stopOffset(movement,contactDistance));
     p.move(MovementType.SELF,new Vec3d(stop.x-p.getX(),0,stop.z-p.getZ()));
     p.requestTeleport(p.getX(),p.getY(),p.getZ());
-    hit(p,s,contact,s.punchDamage);
     Vec3d knockback=new Vec3d(s.dashVelocity.x*.9,Math.max(.2,s.dashVelocity.y*.4),s.dashVelocity.z*.9);
-    contact.setVelocity(knockback);contact.velocityModified=true;
-    if(contact instanceof ServerPlayerEntity victim)victim.networkHandler.sendPacket(new net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket(victim));
-    contact.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,15,5));s.walls.put(contact.getUuid(),new WallImpact(knockback,p.getServerWorld().getTime()));
+    Vec3d impact=contact.getBoundingBox().getCenter(),playerCenter=p.getBoundingBox().getCenter();
+    List<LivingEntity> group=new ArrayList<>(p.getServerWorld().getEntitiesByClass(LivingEntity.class,
+     contact.getBoundingBox().expand(PunchCollision.IMPACT_RADIUS,.9,PunchCollision.IMPACT_RADIUS),
+     e->e!=p&&e.isAlive()&&p.canSee(e)&&PunchCollision.inImpactGroup(e.getBoundingBox(),impact,playerCenter,s.dashVelocity)));
+    if(!group.contains(contact))group.add(contact);
+    for(LivingEntity victim:group){
+     hit(p,s,victim,s.punchDamage);
+     victim.setVelocity(knockback);victim.velocityModified=true;
+     if(victim instanceof ServerPlayerEntity otherPlayer)otherPlayer.networkHandler.sendPacket(new net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket(otherPlayer));
+     victim.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,15,5));
+     s.walls.put(victim.getUuid(),new WallImpact(knockback,p.getServerWorld().getTime()));
+    }
     s.dash=0;velocity(p,new Vec3d(0,p.isOnGround()?Math.max(0,p.getVelocity().y):p.getVelocity().y,0));
    }else{
     s.lastDashPos=p.getPos();
