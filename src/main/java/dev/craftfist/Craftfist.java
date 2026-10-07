@@ -35,6 +35,8 @@ public class Craftfist implements ModInitializer {
   boolean empowered;
   boolean abilityMomentum,sentAbilityMomentum;
   int momentumGrace;
+  int meteorForward,meteorSideways;
+  long meteorInputTime=Long.MIN_VALUE;
   boolean meteorDescending;
   int meteorFallTicks,meteorWave;
   Vec3d meteorImpactPos=Vec3d.ZERO;
@@ -56,7 +58,10 @@ public class Craftfist implements ModInitializer {
   }
   void grantAbilityMomentum(){abilityMomentum=true;momentumGrace=4;}
   void clearAbilityMomentum(){abilityMomentum=false;momentumGrace=0;}
-  void beginMeteor(){meteor=60;meteorDescending=false;meteorFallTicks=0;}
+  void beginMeteor(){meteor=Motion.METEOR_AIR_TICKS;meteorDescending=false;meteorFallTicks=0;}
+  void tickMeteorAir(){if(meteor>0&&!meteorDescending&&--meteor==0)beginMeteorDescent();}
+  boolean meteorRising(){return !meteorDescending&&meteor>Motion.METEOR_AIR_TICKS-Motion.METEOR_ASCENT_TICKS;}
+  boolean canDiveEarly(){return meteor>0&&!meteorDescending&&meteor<=Motion.METEOR_AIR_TICKS-10;}
   void beginMeteorDescent(){meteor=1;meteorDescending=true;meteorFallTicks=0;}
   boolean tickMeteorDescent(boolean landed,boolean outOfWorld){
    if(!meteorDescending)return false;
@@ -98,10 +103,17 @@ public class Craftfist implements ModInitializer {
   Registry.register(Registries.ITEM,Identifier.of("craftfist","gauntlet"),GAUNTLET);
   AttackEntityCallback.EVENT.register((player,world,hand,entity,result)->equipped(player)?ActionResult.FAIL:ActionResult.PASS);
   PayloadTypeRegistry.playC2S().register(AbilityPacket.ID,AbilityPacket.CODEC);
+  PayloadTypeRegistry.playC2S().register(MeteorInputPacket.ID,MeteorInputPacket.CODEC);
   PayloadTypeRegistry.playS2C().register(PunchStatePacket.ID,PunchStatePacket.CODEC);
   PayloadTypeRegistry.playS2C().register(HudPacket.ID,HudPacket.CODEC);
   PayloadTypeRegistry.playS2C().register(FullVelocityPacket.ID,FullVelocityPacket.CODEC);
   ServerPlayNetworking.registerGlobalReceiver(AbilityPacket.ID,(packet,ctx)->ctx.server().execute(()->action(ctx.player(),packet.action())));
+  ServerPlayNetworking.registerGlobalReceiver(MeteorInputPacket.ID,(packet,ctx)->ctx.server().execute(()->{
+   var p=ctx.player();if(!equipped(p)||!p.isAlive()||p.isSpectator())return;
+   var s=STATES.computeIfAbsent(p.getUuid(),k->new State());
+   s.meteorForward=Math.clamp(packet.forward(),-1,1);s.meteorSideways=Math.clamp(packet.sideways(),-1,1);
+   s.meteorInputTime=p.getServerWorld().getTime();
+  }));
   ServerTickEvents.END_SERVER_TICK.register(server->{
    Set<UUID> online=new HashSet<>();
    for(ServerPlayerEntity p:server.getPlayerManager().getPlayerList()){online.add(p.getUuid());tick(p);}
@@ -136,7 +148,7 @@ public class Craftfist implements ModInitializer {
   if(a==1){if(s.charge>=0)release(p,s);return;}
   if(a==5){s.block=0;return;}
   if(a==4 && s.block>0){s.block=0;return;}
-  if(s.meteor>0){if(a==6 && s.meteor<50&&!s.meteorDescending)s.meteor=1;return;}
+  if(s.meteor>0){if(a==6 && s.canDiveEarly())s.beginMeteorDescent();return;}
   if(a==0 && s.cooldown[0]==0 && s.charge<0){s.charge=0;s.block=0;AbilitySounds.play(p,"punch_charge");}
   if(a==2 && s.cooldown[1]==0){
    AbilitySounds.play(p,"slam_launch");
@@ -269,9 +281,12 @@ public class Craftfist implements ModInitializer {
   if(s.meteor>0){
    p.fallDistance=0;s.safeFall=60;
    if(!s.meteorDescending){
-    s.meteor--;
-    if(s.meteor>1){Vec3d facing=Vec3d.fromPolar(0,p.getYaw());velocity(p,new Vec3d(facing.x*1.2,s.meteor>48?2.3:0,facing.z*1.2));particles(p,ParticleTypes.END_ROD,4);}
-    else s.beginMeteorDescent();
+    s.tickMeteorAir();
+    if(!s.meteorDescending){
+     boolean fresh=s.meteorInputTime!=Long.MIN_VALUE&&p.getServerWorld().getTime()-s.meteorInputTime<=5;
+     Vec3d horizontal=Motion.meteorHorizontal(p.getYaw(),fresh?s.meteorForward:0,fresh?s.meteorSideways:0);
+     velocity(p,new Vec3d(horizontal.x,s.meteorRising()?2.3:0,horizontal.z));particles(p,ParticleTypes.END_ROD,4);
+    }
    }
    if(s.meteorDescending){
     boolean landed=p.isOnGround()||p.isTouchingWater()||p.isInLava();

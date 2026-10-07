@@ -44,7 +44,7 @@ While equipped, right click charges Rocket Punch and Left Shift is reserved for 
 - Hand Cannon waits one second after your last shot before restoring a round. Remaining rounds return every 13 ticks. Firing restarts the wait.
 - Ability hits grant temporary shields, up to eight hearts, and build ultimate charge. Ultimate also charges over time.
 
-Meteor Strike drops at six blocks per tick and impacts the first surface you land on. Its damage reaches eight blocks in all directions, with an expanding circular particle wave. You can steer during the airborne phase; looking up or down does not affect horizontal speed.
+Meteor Strike drops at six blocks per tick and impacts the first surface you land on. Its damage reaches eight blocks in all directions, with an expanding circular particle wave. The airborne aiming phase lasts five seconds. Use WASD during this phase to move relative to your camera at 1.2 blocks per tick. Releasing the keys makes you hover. Diagonal movement keeps the same speed, and looking up or down does not affect it.
 
 ## Building
 
@@ -63,3 +63,5 @@ Use `gradlew.bat runClient` for a development client. Builds also save a numbere
 The mod uses a Thunder Doomfist skin and Minecraft sound effects. Custom sounds can be supplied through a resource pack using the events in `assets/craftfist/sounds.json` and mono OGG files.
 
 This is an unofficial fan mod. Doomfist and Overwatch belong to Blizzard; the character texture belongs to its creator.
+
+

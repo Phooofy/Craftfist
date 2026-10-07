@@ -6,6 +6,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MeteorStrikeTest {
+ @Test void aimingLastsFiveSecondsButTheAscentStillEndsAfterTwelveTicks(){
+  var s=new Craftfist.State();s.beginMeteor();
+  for(int tick=1;tick<=99;tick++){
+   s.tickMeteorAir();assertFalse(s.meteorDescending);
+   assertEquals(tick<12,s.meteorRising());
+   assertEquals(tick>=10,s.canDiveEarly());
+  }
+  s.tickMeteorAir();assertTrue(s.meteorDescending);assertFalse(s.canDiveEarly());
+ }
  @Test void descentStaysActiveWhileAirborneAndImpactsOnlyOnceOnLanding(){
   var s=new Craftfist.State();s.beginMeteor();s.beginMeteorDescent();
   for(int tick=0;tick<40;tick++){
@@ -30,7 +39,7 @@ class MeteorStrikeTest {
  @Test void aNewCastResetsThePreviousDescentPhase(){
   var s=new Craftfist.State();s.beginMeteor();s.beginMeteorDescent();
   s.tickMeteorDescent(false,false);s.finishMeteor();s.beginMeteor();
-  assertEquals(60,s.meteor);assertEquals(0,s.meteorFallTicks);assertFalse(s.meteorDescending);
+  assertEquals(100,s.meteor);assertEquals(0,s.meteorFallTicks);assertFalse(s.meteorDescending);
   assertFalse(s.tickMeteorDescent(true,false));
  }
  @Test void theFastDownwardVelocitySurvivesNetworkSerialization(){

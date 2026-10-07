@@ -24,6 +24,11 @@ public class CraftfistClient implements ClientModInitializer {
   ClientTickEvents.END_CLIENT_TICK.register(c->{
   PunchAnimation.tick(c.player!=null && Craftfist.equipped(c.player));
   if(c.player==null)hud=null;
+  if(c.player!=null&&Craftfist.equipped(c.player)&&ClientPlayNetworking.canSend(MeteorInputPacket.ID)){
+   int forward=c.currentScreen==null?(c.options.forwardKey.isPressed()?1:0)-(c.options.backKey.isPressed()?1:0):0;
+   int sideways=c.currentScreen==null?(c.options.leftKey.isPressed()?1:0)-(c.options.rightKey.isPressed()?1:0):0;
+   ClientPlayNetworking.send(new MeteorInputPacket(forward,sideways));
+  }
   if(c.player==null||c.currentScreen!=null||!Craftfist.equipped(c.player)){if(punching&&c.player!=null)send(9);punching=jumping=slamming=false;return;}
   boolean p=c.options.useKey.isPressed()||punch.isPressed(),j=c.options.jumpKey.isPressed();
   boolean s=slam.isPressed()||(slam.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT,0)&&InputUtil.isKeyPressed(c.getWindow().getHandle(),GLFW.GLFW_KEY_LEFT_SHIFT));

@@ -1,11 +1,19 @@
 package dev.craftfist;
+import net.minecraft.util.math.Vec3d;
 
 /** Minecraft-independent movement math, measured in blocks per tick. */
 public final class Motion {
  public static final int SLAM_RANGE=7,SLAM_HALF_ANGLE=45;
  public static final double SLAM_HORIZONTAL=1.95,CHARGE_INPUT_SCALE=.35;
  public static final double METEOR_DESCENT_SPEED=6;
+ public static final int METEOR_AIR_TICKS=100,METEOR_ASCENT_TICKS=12;
  private Motion() {}
+ public static Vec3d meteorHorizontal(float yaw,int forward,int sideways){
+  double f=Math.clamp(forward,-1,1),s=Math.clamp(sideways,-1,1),length=Math.hypot(f,s);
+  if(length==0)return Vec3d.ZERO;
+  double a=Math.toRadians(yaw),speed=1.2/length;
+  return new Vec3d((s*Math.cos(a)-f*Math.sin(a))*speed,0,(f*Math.cos(a)+s*Math.sin(a))*speed);
+ }
  public static boolean needsFullVelocity(double x,double y,double z){return Math.abs(x)>3.9||Math.abs(y)>3.9||Math.abs(z)>3.9;}
  /** Clipping across a wall matters only if it opposes the knockback direction. */
  public static boolean opposingWall(double requestedX,double requestedZ,double clearX,double clearZ){

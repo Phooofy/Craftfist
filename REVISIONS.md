@@ -15,6 +15,8 @@ Successful builds archive the installable JAR, complete project source ZIP, and 
 | 1.0.6 | Redesigned left-corner HUD with six pixel ability icons, keybind badges, ammo pips, cooldown/charge bars, and ultimate progress. Hand Cannon cannot regenerate during a rapid burst: its first replacement round arrives after one second without firing, followed by the normal 13-tick regeneration interval. |
 
 | 1.0.7 | Shorter player-facing documentation and repository cleanup for publishing. Gameplay matches 1.0.6. |
+| 1.0.8 | Meteor Strike gives five seconds to rise and aim before diving. Ascent height and the half-second early-dive unlock stay the same. |
+| 1.0.9 | Meteor Strike hovers without movement input and uses WASD relative to camera yaw at the same 1.2-block/tick speed. Diagonal movement is normalized and the dive remains straight down. |
 
 ## Restore a revision
 

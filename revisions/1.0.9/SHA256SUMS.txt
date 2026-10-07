@@ -1,0 +1,2 @@
+abf97e03d8196091c6dd4e8f2b31dfe9c57c7858d3768bb70c1a05956afbe1c6  craftfist-1.0.9.jar
+cdc0bf3c97d9cf396938ca69826dc6b1c617630e264626c2e7ac02a2178f9e28  craftfist-1.0.9-project.zip
